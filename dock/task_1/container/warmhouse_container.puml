@@ -27,11 +27,15 @@ System_Boundary(warmhouse, "Warm House") {
 
     Container(service_panel, "Widget Service", "Python", "Микросервис панели управления устройствами. Содержит в себе бизнес логику работы с устройствами.", $tags = "microService")
     Container(service_controller, "Controller Service", "Go", "Отправляет команды на умные устройства", $tags = "microService")
-    Container(service_reciever, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
     Container(service_users, "User Service", "Python", "Микросервис пользователей", $tags = "microService")
+
+    Container(service_reciever_heating, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
+    Container(service_reciever_lighting, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
+    Container(service_reciever_door, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
     
-    ContainerDb(database_reciever, "Database", "", "База данных показаний устройств", $tags = "storage")
-    ContainerDb(database_users, "Database", "Postgres", "База данных пользователей", $tags = "storage")
+    ContainerDb(database_reciever, "Database Cluster", "", "База данных показаний устройств", $tags = "storage")
+    
+    ContainerDb(database_users, "Database Cluster", "Postgres", "База данных пользователей", $tags = "storage")
     Container(queue_commands, "Message Broker", "Kafka", "Брокер сообщений с коммандами для устройств. Команды для для разных типов устройств хранятся в разных топиках.", $tags = "storage")
 }
 
@@ -47,14 +51,17 @@ Rel_Back(controller_door, service_controller, "Комманда")
 Rel(customer, app_web, "")
 Rel(customer, app_mobile, "")
 
-Rel(sensor_heating, service_reciever, "Данные")
-Rel(sensor_lighting, service_reciever, "Данные")
-Rel(sensor_door, service_reciever, "Данные")
+Rel(sensor_heating, service_reciever_heating, "Данные")
+Rel(sensor_lighting, service_reciever_lighting, "Данные")
+Rel(sensor_door, service_reciever_door, "Данные")
+
+Rel(service_reciever_heating, database_reciever, "Запись")
+Rel(service_reciever_lighting, database_reciever, "Запись")
+Rel(service_reciever_door, database_reciever, "Запись")
 
 Rel(service_panel, queue_commands, "Сообщение-Команда")
 Rel(queue_commands, service_controller, "Сообщение-Команда")
 
 Rel(service_users, database_users, "")
-Rel(service_reciever, database_reciever, "Запись")
 Rel(service_panel, database_reciever, "Чтение")
 @enduml
