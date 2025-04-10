@@ -33,8 +33,10 @@ System_Boundary(warmhouse, "Warm House") {
     Container(service_reciever_lighting, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
     Container(service_reciever_door, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
     
-    ContainerDb(database_reciever, "Database Cluster", "", "База данных показаний устройств", $tags = "storage")
-    
+    ContainerDb(database_reciever_heating, "Heating Database Cluster", "", "База данных показаний устройств", $tags = "storage")
+    ContainerDb(database_reciever_lighting, "Lighting Database Cluster", "", "База данных показаний устройств", $tags = "storage")
+    ContainerDb(database_reciever_door, "DoorsDatabase Cluster", "", "База данных показаний устройств", $tags = "storage")
+
     ContainerDb(database_users, "Database Cluster", "Postgres", "База данных пользователей", $tags = "storage")
     Container(queue_commands, "Message Broker", "Kafka", "Брокер сообщений с коммандами для устройств. Команды для для разных типов устройств хранятся в разных топиках.", $tags = "storage")
 }
@@ -55,13 +57,15 @@ Rel(sensor_heating, service_reciever_heating, "Данные")
 Rel(sensor_lighting, service_reciever_lighting, "Данные")
 Rel(sensor_door, service_reciever_door, "Данные")
 
-Rel(service_reciever_heating, database_reciever, "Запись")
-Rel(service_reciever_lighting, database_reciever, "Запись")
-Rel(service_reciever_door, database_reciever, "Запись")
+Rel(service_reciever_heating, database_reciever_heating, "Запись")
+Rel(service_reciever_lighting, database_reciever_lighting, "Запись")
+Rel(service_reciever_door, database_reciever_door, "Запись")
 
 Rel(service_panel, queue_commands, "Сообщение-Команда")
 Rel(queue_commands, service_controller, "Сообщение-Команда")
 
 Rel(service_users, database_users, "")
-Rel(service_panel, database_reciever, "Чтение")
+Rel(service_panel, database_reciever_heating, "Чтение")
+Rel(service_panel, database_reciever_lighting, "Чтение")
+Rel(service_panel, database_reciever_door, "Чтение")
 @enduml
