@@ -1,0 +1,20 @@
+@startuml
+!include C4_Context.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Warmhouse Monolith
+
+Person(customer, "User", "Внешний пользователь системы")
+
+System(smart_home_monolith, "Smart Home Monolith", "Пользователи могут удалённо просматривать текущую температуру в своих домах через веб-интерфейс и включать/выключать отопление в своих домах.")
+System_Boundary(c0, "Дом") {
+    System(sensor_temperature, "Temperature Sensors", "Тепловые сенсоры в квартире")
+    System(controller_heat, "Heat Controllers", "Регуляторы температуры системы отпления")
+}
+
+Rel(customer, smart_home_monolith, "Использует")
+Rel(sensor_temperature, smart_home_monolith, "Отправляет данные")
+Rel(smart_home_monolith, controller_heat, "Контролирует нагрев")
+
+@enduml
