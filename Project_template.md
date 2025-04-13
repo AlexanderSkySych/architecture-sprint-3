@@ -64,8 +64,6 @@
 
 Добавьте сюда диаграмму контекста в модели C4.
 
-Чтобы добавить ссылку в файл Readme.md, нужно использовать синтаксис Markdown. Это делают так:
-
 [Диаграмма Контекста](https://github.com/AlexanderSkySych/architecture-sprint-3/blob/warmhouse/dock/0_Context/warmhouse_context.puml)
 
 # Задание 2. Проектирование микросервисной архитектуры
