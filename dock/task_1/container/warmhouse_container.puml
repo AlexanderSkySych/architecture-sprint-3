@@ -25,13 +25,20 @@ System_Boundary(warmhouse, "Warm House") {
     Container(app_web, "Web Application", "Angular", "Веб приложение")
     Container(app_mobile, "Mobile Application", "Android/IOS", "Мобильное приложение")
 
+    Container(auth, "Auth service", "", "Сервис аутенификации", $tags = "microService")
+
+    Container(bff_web_users, "BFF Users service (Web)", "", "", $tags = "microService")
+    Container(bff_mobile_users, "BFF Users service (Mobile)", "", "", $tags = "microService")
+    Container(bff_web_widgets, "BFF Widgget service (Web)", "", "", $tags = "microService")
+    Container(bff_mobile_widgets, "BFF Widget service (Mobile)", "", "", $tags = "microService")
+
     Container(service_panel, "Widget Service", "Python", "Микросервис панели управления устройствами. Содержит в себе бизнес логику работы с устройствами.", $tags = "microService")
     Container(service_controller, "Controller Service", "Go", "Отправляет команды на умные устройства", $tags = "microService")
     Container(service_users, "User Service", "Python", "Микросервис пользователей", $tags = "microService")
 
-    Container(service_reciever_heating, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
-    Container(service_reciever_lighting, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
-    Container(service_reciever_door, "Reciever Service", "Go", "Валидирует и сохраняет данные сенсоров", $tags = "microService")
+    Container(service_reciever_heating, "Reciever Service", "Go", "Валидируе, преобразует и сохраняет данные сенсоров", $tags = "microService")
+    Container(service_reciever_lighting, "Reciever Service", "Go", "Валидирует, преобразует и сохраняет данные сенсоров", $tags = "microService")
+    Container(service_reciever_door, "Reciever Service", "Go", "Валидирует, преобразует и сохраняет данные сенсоров", $tags = "microService")
     
     ContainerDb(database_reciever_heating, "Heating Database Cluster", "", "База данных показаний устройств", $tags = "storage")
     ContainerDb(database_reciever_lighting, "Lighting Database Cluster", "", "База данных показаний устройств", $tags = "storage")
@@ -41,10 +48,20 @@ System_Boundary(warmhouse, "Warm House") {
     Container(queue_commands, "Message Broker", "Kafka", "Брокер сообщений с коммандами для устройств. Команды для для разных типов устройств хранятся в разных топиках.", $tags = "storage")
 }
 
-Rel(app_web, service_users, "")
-Rel(app_web, service_panel, "")
-Rel(app_mobile, service_users, "")
-Rel(app_mobile, service_panel, "")
+Rel(app_web, bff_web_users, "")
+Rel(app_web, bff_web_widgets, "")
+Rel(app_mobile, bff_mobile_users, "")
+Rel(app_mobile, bff_mobile_widgets, "")
+
+Rel(bff_web_users, service_users, "")
+Rel(bff_web_widgets, service_panel, "")
+Rel(bff_mobile_users, service_users, "")
+Rel(bff_mobile_widgets, service_panel, "")
+
+Rel(bff_web_users, auth, "")
+Rel(bff_web_widgets, auth, "")
+Rel(bff_mobile_users, auth, "")
+Rel(bff_mobile_widgets, auth, "")
 
 Rel_Back(controller_heating, service_controller, "Комманда")
 Rel_Back(controller_lighting, service_controller, "Комманда")
