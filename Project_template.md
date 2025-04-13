@@ -80,7 +80,9 @@
 
 **Диаграмма кода (Code)**
 
-[Диаграмма кода](https://github.com/AlexanderSkySych/architecture-sprint-3/blob/warmhouse/dock/3_Code/warmhouse_code.puml)
+[Диаграмма кода класса отправки команд на устройств](https://github.com/AlexanderSkySych/architecture-sprint-3/blob/warmhouse/dock/3_Code/warmhouse_code.puml)
+
+Проиллюстрирован паттерн "Стратегия" для формирование классов инициализаторов команд.
 
 # Задание 3. Разработка ER-диаграммы
 
