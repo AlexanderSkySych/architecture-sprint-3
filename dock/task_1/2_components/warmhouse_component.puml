@@ -1,0 +1,50 @@
+@startuml
+!include C4_Component.puml
+
+LAYOUT_WITH_LEGEND()
+
+title Warmhouse Widget Servise Component Diagram
+
+Container(api_gateway_app, "API Gateway", "Istio", "Распределяет запросы и проводит балансировку запросов пользовательских интерфейсов.")
+    
+Container_Boundary(service_panel, "Widget Service") {
+    Component(layer_adapter, "Web Api Adapter", "Data Serializer", "Сериализация готовых данных виджетов в JSON формате")
+
+    Component(layer_repository_widgets, "Repository (Widgets)" ,"Database Queries" ,"Модуль запросов к бд сенсоров системы отопления")
+    Component(layer_repository_heating, "Repository (Heating)" ,"Database Queries" ,"Модуль запросов к бд сенсоров системы отопления")
+    Component(layer_repository_lighting, "Repository (Lighting)" ,"Database Queries" ,"Модуль запросов к бд сенсоров системы освещения")
+    Component(layer_repository_door, "Repository (Doors)" ,"Database Queries" ,"Модуль запросов к бд сенсоров дверей и ворот")
+
+    Component(layer_service_widgets, "Service (Widgets)" ,"Business Logic" ,"Модуль бизнес логики виджета системы отопления")
+    Component(layer_service_heating, "Service (Heating)" ,"Business Logic" ,"Модуль бизнес логики виджета системы отопления")
+    Component(layer_service_lighting, "Service (Lighting)" ,"Business Logic" ,"Модуль бизнес логики виджета системы освещения")
+    Component(layer_service_door, "Service (Doors)" ,"Business Logic", "Модуль бизнес логики виджета дверей и ворот")
+
+    Component(layer_usecase_panel, "Use Case (Doors)" ,"Business Logic Combination" ,"Собирает данные по всем миджетам переданного пользователя. Нужный сервис бизнес логики определяется по свойству type хранимой в бд модели виджета.")
+}
+
+ContainerDb(database_widgets, "Widjet Database Cluster", "Postgres", "База данных параметров виджетов", $tags = "storage")
+ContainerDb(database_reciever_heating, "Heating Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
+ContainerDb(database_reciever_lighting, "Lighting Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
+ContainerDb(database_reciever_door, "Doors Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
+
+Rel(api_gateway_app, layer_adapter, "Uses", "JSON/HTTPS")
+
+Rel(layer_usecase_panel, layer_adapter, "Uses", "Dependency Injection")
+
+Rel(layer_service_widgets, layer_usecase_panel, "Uses", "Dependency Injection")
+Rel(layer_service_heating, layer_usecase_panel, "Uses", "Dependency Injection")
+Rel(layer_service_lighting, layer_usecase_panel, "Uses", "Dependency Injection")
+Rel(layer_service_door, layer_usecase_panel, "Uses", "Dependency Injection")
+
+Rel(layer_repository_widgets, layer_service_widgets, "Uses", "Dependency Injection")
+Rel(layer_repository_heating, layer_service_heating, "Uses", "Dependency Injection")
+Rel(layer_repository_lighting, layer_service_lighting, "Uses", "Dependency Injection")
+Rel(layer_repository_door, layer_service_door, "Uses", "Dependency Injection")
+
+Rel_Back(database_widgets, layer_repository_widgets, "Read")
+Rel_Back(database_reciever_heating, layer_repository_heating, "Read")
+Rel_Back(database_reciever_lighting, layer_repository_lighting, "Read")
+Rel_Back(database_reciever_door, layer_repository_door, "Read")
+
+@enduml
