@@ -1,0 +1,48 @@
+@startuml
+
+title Warmhouse Отправка команды на устройство
+
+
+abstract class Command {
+    _mapping_classes: dict[tuple[device, command], Command]
+    device: str
+    command: str
+
+    Command __init_subclass__(cls, device: str, command: str)
+    
+    None get_strategy(device: str, command: str)
+    None execute(data: dict)
+}
+
+class CommandHeatingTemperature {
+    device: str = 'heating'
+    command: str = 'set_temp'
+    None execute(data: dict)
+}
+
+class CommandLightingColor {
+    device: str = 'lighting'
+    command: str = 'set_color'
+    None execute(data: dict)
+}
+
+class CommandLightingState {
+    device: str = 'lighting'
+    command: str = 'set_state'
+    None execute(data: dict)
+}
+
+class CommandDoorState {
+    device: str = 'door'
+    command: str = 'set_state'
+    None execute(data: dict)
+}
+
+
+Command ----> CommandHeatingTemperature : [inherits]
+Command ----> CommandLightingColor      : [inherits]
+Command ----> CommandLightingState      : [inherits]
+Command ----> CommandDoorState          : [inherits]
+
+
+@enduml

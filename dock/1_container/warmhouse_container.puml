@@ -1,0 +1,93 @@
+@startuml
+!include C4_Container.puml
+
+AddElementTag("microService", $shape=EightSidedShape(), $bgColor="CornflowerBlue", $fontColor="white", $legendText="micro service\neight sided")
+AddElementTag("storage", $shape=RoundedBoxShape(), $bgColor="lightSkyBlue", $fontColor="white")
+
+LAYOUT_TOP_DOWN()
+' LAYOUT_AS_SKETCH()
+LAYOUT_WITH_LEGEND()
+
+title Warmhouse Container DiagramBorderColor
+Person(customer, Customer, "Пользователь сервиса")
+
+System_Boundary(house, "Дом") {
+    System_Ext(sensor_heating, "Heat Sensor", "Сенсор температуры")
+    System_Ext(sensor_lighting, "Lighting Sensor", "Сенсор систем освещения")
+    System_Ext(sensor_door, "Door Sensor", "Сенсор дверей")
+
+    System_Ext(controller_heating, "Heating Controller", "Умное устройство")
+    System_Ext(controller_lighting, "Lighting Controller", "Умное устройство")
+    System_Ext(controller_door, "Door Controller", "Умное устройство")
+}
+
+System_Boundary(warmhouse, "Warm House") {
+    Container(app_web, "Web Application", "Angular", "Веб приложение")
+    Container(app_mobile, "Mobile Application", "Android/IOS", "Мобильное приложение")
+
+    Container(api_gateway_app, "API Gateway", "Istio", "Распределяет запросы и проводит балансировку запросов пользовательских интерфейсов.")
+    Container(api_gateway_sensors, "API Gateway", "Istio", "Распределяет запросы и проводит балансировку запросов от сенсоров.")
+
+
+    System_Boundary(section_app, "Блок контейнеров пользовательского приложения"){
+        Container(auth, "Auth service", "", "Сервис аутенификации", $tags = "microService")
+        ContainerDb(database_auth, "Auth Database Cluster", "Postgres", "База данных сервиса аутентификации", $tags = "storage")
+
+        Container(service_users, "User Service", "Python", "Микросервис пользователей", $tags = "microService")
+        ContainerDb(database_users, "User Database Cluster", "Postgres", "База данных пользователей", $tags = "storage")
+
+        Container(service_panel, "Widget Service", "Python", "Микросервис панели управления устройствами. Содержит в себе бизнес логику работы с устройствами.", $tags = "microService")
+        ContainerDb(database_widgets, "Widjet Database Cluster", "Postgres", "База данных параметров виджетов", $tags = "storage")
+        
+        Container(service_controller, "Controller Service", "Go", "Отправляет команды на умные устройства", $tags = "microService")
+        Container(queue_commands, "Message Broker", "Kafka", "Брокер сообщений с коммандами для устройств. Команды для для разных типов устройств хранятся в разных топиках.", $tags = "storage")
+    }
+
+    System_Boundary(section_sensors, "Блок контейнеров обработки данных сенсоров"){
+        Container(service_reciever_heating, "Reciever Service (Heating)", "Go", "Валидируе, преобразует и сохраняет данные сенсоров", $tags = "microService")
+        Container(service_reciever_lighting, "Reciever Service (Lighting)", "Go", "Валидирует, преобразует и сохраняет данные сенсоров", $tags = "microService")
+        Container(service_reciever_door, "Reciever Service (Doors)", "Go", "Валидирует, преобразует и сохраняет данные сенсоров", $tags = "microService")
+        
+        ContainerDb(database_reciever_heating, "Heating Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
+        ContainerDb(database_reciever_lighting, "Lighting Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
+        ContainerDb(database_reciever_door, "Doors Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
+    }
+}
+
+Rel(app_web, api_gateway_app, "")
+Rel(app_mobile, api_gateway_app, "")
+
+Rel(api_gateway_app, service_users, "")
+Rel(api_gateway_app, service_panel, "")
+Rel(api_gateway_app, auth, "")
+
+Rel(api_gateway_sensors, service_reciever_heating, "")
+Rel(api_gateway_sensors, service_reciever_lighting, "")
+Rel(api_gateway_sensors, service_reciever_door, "")
+
+
+Rel_Back(controller_heating, service_controller, "Комманда")
+Rel_Back(controller_lighting, service_controller, "Комманда")
+Rel_Back(controller_door, service_controller, "Комманда")
+
+Rel(customer, app_web, "")
+Rel(customer, app_mobile, "")
+
+Rel(sensor_heating, api_gateway_sensors, "Данные")
+Rel(sensor_lighting, api_gateway_sensors, "Данные")
+Rel(sensor_door, api_gateway_sensors, "Данные")
+
+Rel(service_reciever_heating, database_reciever_heating, "Запись")
+Rel(service_reciever_lighting, database_reciever_lighting, "Запись")
+Rel(service_reciever_door, database_reciever_door, "Запись")
+
+Rel(service_panel, database_widgets, "")
+Rel(service_panel, queue_commands, "Сообщение-Команда")
+Rel(queue_commands, service_controller, "Сообщение-Команда")
+
+Rel(auth, database_auth, "")
+Rel(service_users, database_users, "")
+Rel(service_panel, database_reciever_heating, "Чтение")
+Rel(service_panel, database_reciever_lighting, "Чтение")
+Rel(service_panel, database_reciever_door, "Чтение")
+@enduml
