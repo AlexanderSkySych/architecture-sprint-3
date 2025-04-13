@@ -1,0 +1,33 @@
+@startuml
+!include C4_Sequence.puml
+
+title Warmhouse Отправка команды на устройство
+
+Container(app_web, "Web Application", "Angular", "Веб приложение")
+Container(api_gateway_app, "API Gateway", "Istio", "Распределяет запросы и проводит балансировку запросов пользовательских интерфейсов.")
+Container(auth, "Auth service", "", "Сервис аутенификации", $tags = "microService")
+Container_Boundary(b, "Widget Service")
+    Component(layer_adapter_command, "Adapter (Send Command)", "Data Serializer", "Обработка запроса на отправку комманды")
+    Component(layer_usecase_command, "Use Case (Send Command)" ,"Business Logic Combination" ,"Подготовливает и обрабатывает данные для отправки команды на устройство")
+    Component(layer_service_command, "Service (Device Command)" ,"Business Logic", "Модуль логики отправки комманд устройств")
+    Component(layer_repository_command, "Repository (Device Command)" ,"Kafka Publising" ,"Модуль отправки сообщений в кафку")
+Boundary_End()
+Container(queue_commands, "Message Broker", "Kafka", "Брокер сообщений с коммандами для устройств. Команды для для разных типов устройств хранятся в разных топиках.", $tags = "storage")
+Container(service_controller, "Controller Service", "Go", "Отправляет команды на умные устройства", $tags = "microService")
+System_Ext(controller, "Device Controller", "Умное устройство")
+
+Rel(app_web, api_gateway_app, "Sends Device Command Request", "JSON/HTTPS")
+Rel(api_gateway_app, auth, "Submits credentials to", "JSON/HTTPS")
+Rel(auth, api_gateway_app, "Recieves Auth Response", "JSON/HTTPS")
+Rel(api_gateway_app, layer_adapter_command, "Sends Device Command With User Data", "JSON/HTTPS")
+
+Rel(layer_adapter_command, layer_usecase_command, "Calls Command Use Case Method", "dict/Method Call")
+Rel(layer_usecase_command, layer_service_command, "Initiates Device Command", "dict/Method Call")
+Rel(layer_service_command, layer_repository_command, "Initiates Kafka Command", "JSON/HTTPS")
+Rel(layer_repository_command, queue_commands, "Publishes Kafka Message", "JSON/HTTPS/Pub")
+
+Rel(queue_commands, service_controller, "Recieves Kafka Message", "JSON/HTTPS/Sub")
+Rel(service_controller, controller, "Applies command on Device", "JSON/HTTPS")
+
+SHOW_LEGEND()
+@enduml

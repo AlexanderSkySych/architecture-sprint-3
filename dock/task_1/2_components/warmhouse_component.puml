@@ -9,7 +9,7 @@ Container(api_gateway_app, "API Gateway", "Istio", "Распределяет з�
     
 Container_Boundary(service_panel, "Widget Service") {
     Component(layer_adapter_panel, "Adapter (Control Panel)", "Data Serializer", "Сериализация готовых данных виджетов в JSON формате")
-    Component(layer_adapter_command, "Adapter (Send Command)", "Data Serializer", "Обработка данных отправляемой команды")
+    Component(layer_adapter_command, "Adapter (Send Command)", "Data Serializer", "Обработка запроса на отправку комманды")
 
     Component(layer_usecase_panel, "Use Case (Control Panel)" ,"Business Logic Combination" ,"Собирает данные по всем виджетам переданного пользователя. Нужный сервис бизнес логики определяется по свойству type хранимой в бд модели виджета.")
     Component(layer_usecase_command, "Use Case (Send Command)" ,"Business Logic Combination" ,"Подготовливает и обрабатывает данные для отправки команды на устройство")
