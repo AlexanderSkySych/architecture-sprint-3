@@ -67,34 +67,27 @@
 Чтобы добавить ссылку в файл Readme.md, нужно использовать синтаксис Markdown. Это делают так:
 
 ```markdown
-[Текст ссылки](URL)
+[Диаграмма Контекста](https://github.com/AlexanderSkySych/architecture-sprint-3/blob/warmhouse/dock/0_Context/warmhouse_context.puml)
 ```
-
-Замените `Текст ссылки` текстом, который хотите использовать для ссылки. Вместо `URL` вставьте адрес, на который должна вести ссылка. Например:
-
-```markdown
-[Посетите Яндекс](https://ya.ru/)
-```
-
 # Задание 2. Проектирование микросервисной архитектуры
 
 В этом задании вам нужно предоставить только диаграммы в модели C4. Мы не просим вас отдельно описывать получившиеся микросервисы и то, как вы определили взаимодействия между компонентами To-Be системы. Если вы правильно подготовите диаграммы C4, они и так это покажут.
 
 **Диаграмма контейнеров (Containers)**
 
-Добавьте диаграмму.
+[Диаграмма Контейнеров](https://github.com/AlexanderSkySych/architecture-sprint-3/blob/warmhouse/dock/1_container/warmhouse_container.puml)
 
 **Диаграмма компонентов (Components)**
 
-Добавьте диаграмму для каждого из выделенных микросервисов.
+[Диаграмма компонентов](https://github.com/AlexanderSkySych/architecture-sprint-3/blob/warmhouse/dock/2_Components/warmhouse_component.puml)
 
 **Диаграмма кода (Code)**
 
-Добавьте одну диаграмму или несколько.
+[Диаграмма кода](https://github.com/AlexanderSkySych/architecture-sprint-3/blob/warmhouse/dock/3_Code/warmhouse_code.puml)
 
 # Задание 3. Разработка ER-диаграммы
 
-Добавьте сюда ER-диаграмму. Она должна отражать ключевые сущности системы, их атрибуты и тип связей между ними.
+[ER-диаграмма сервиса контрольной панели умного дома](https://github.com/AlexanderSkySych/architecture-sprint-3/blob/warmhouse/dock/4_Entities/warmhouse_entities.puml)
 
 Четвёртое задание — дополнительное. Его можно сделать по желанию. Чтобы ревьюер быстрее проверил ваше решение, укажите, сделали вы это задание или нет. Для этого оставьте нужный эмодзи около заголовка задания:
 
