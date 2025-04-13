@@ -3,11 +3,11 @@
 
 LAYOUT_WITH_LEGEND()
 
-title Warmhouse Monolith
+title Warmhouse
 
 Person(customer, "User", "Внешний пользователь системы")
 
-System(smart_home_monolith, "Smart Home Monolith", "Пользователи могут удалённо просматривать данные со всех умных устройств и управлять ими.")
+System(smart_home_monolith, "Smart Home", "Пользователи могут удалённо просматривать данные со всех умных устройств и управлять ими.")
 System_Boundary(house, "Дом") {
     System_Ext(sensor_temperature, "Sensors", "Сенсоры отдельных устройств")
     System_Ext(controller_heat, "Device Controllers", "Регуляторы и контроллеры отдельных устройств")

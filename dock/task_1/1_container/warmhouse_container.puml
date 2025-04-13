@@ -31,12 +31,13 @@ System_Boundary(warmhouse, "Warm House") {
 
     System_Boundary(section_app, "Блок контейнеров пользовательского приложения"){
         Container(auth, "Auth service", "", "Сервис аутенификации", $tags = "microService")
+        ContainerDb(database_auth, "Auth Database Cluster", "Postgres", "База данных сервиса аутентификации", $tags = "storage")
+
+        Container(service_users, "User Service", "Python", "Микросервис пользователей", $tags = "microService")
+        ContainerDb(database_users, "User Database Cluster", "Postgres", "База данных пользователей", $tags = "storage")
 
         Container(service_panel, "Widget Service", "Python", "Микросервис панели управления устройствами. Содержит в себе бизнес логику работы с устройствами.", $tags = "microService")
         Container(service_controller, "Controller Service", "Go", "Отправляет команды на умные устройства", $tags = "microService")
-        Container(service_users, "User Service", "Python", "Микросервис пользователей", $tags = "microService")
-        ContainerDb(database_users, "Database Cluster", "Postgres", "База данных пользователей", $tags = "storage")
-
         Container(queue_commands, "Message Broker", "Kafka", "Брокер сообщений с коммандами для устройств. Команды для для разных типов устройств хранятся в разных топиках.", $tags = "storage")
     }
 
@@ -45,9 +46,9 @@ System_Boundary(warmhouse, "Warm House") {
         Container(service_reciever_lighting, "Reciever Service (Lighting)", "Go", "Валидирует, преобразует и сохраняет данные сенсоров", $tags = "microService")
         Container(service_reciever_door, "Reciever Service (Doors)", "Go", "Валидирует, преобразует и сохраняет данные сенсоров", $tags = "microService")
         
-        ContainerDb(database_reciever_heating, "Heating Database Cluster", "", "База данных показаний устройств", $tags = "storage")
-        ContainerDb(database_reciever_lighting, "Lighting Database Cluster", "", "База данных показаний устройств", $tags = "storage")
-        ContainerDb(database_reciever_door, "DoorsDatabase Cluster", "", "База данных показаний устройств", $tags = "storage")
+        ContainerDb(database_reciever_heating, "Heating Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
+        ContainerDb(database_reciever_lighting, "Lighting Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
+        ContainerDb(database_reciever_door, "Doors Database Cluster", "Cassandra", "База данных показаний устройств", $tags = "storage")
     }
 }
 
@@ -81,6 +82,7 @@ Rel(service_reciever_door, database_reciever_door, "Запись")
 Rel(service_panel, queue_commands, "Сообщение-Команда")
 Rel(queue_commands, service_controller, "Сообщение-Команда")
 
+Rel(auth, database_auth, "")
 Rel(service_users, database_users, "")
 Rel(service_panel, database_reciever_heating, "Чтение")
 Rel(service_panel, database_reciever_lighting, "Чтение")
