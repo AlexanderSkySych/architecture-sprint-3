@@ -11,6 +11,7 @@ entity "Device" as Device {
   *id : uuid <<generated>>
   --
   *name: str
+  comment: str
   serial_number: str
   id_type: uuid <<FK>>
   id_location: uuid <<FK>>
