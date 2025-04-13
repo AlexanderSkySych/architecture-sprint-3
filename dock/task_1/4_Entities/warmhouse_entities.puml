@@ -1,0 +1,62 @@
+title Warmhouse Widget Servise Entities Relation Diagram
+
+entity "Location" as Location {
+  *id : uuid <<generated>>
+  --
+  *name: str
+  adress: str
+}
+
+entity "Device" as Device {
+  *id : uuid <<generated>>
+  --
+  *name: str
+  serial_number: str
+  id_type: uuid <<FK>>
+  id_location: uuid <<FK>>
+}
+
+entity "DeviceType" as DeviceType {
+  *id : uuid <<generated>>
+  --
+  *title: str
+  description: str
+}
+
+entity "DeviceAccess" as DeviceAccess {
+  *id : uuid <<generated>>
+  --
+  *id_user: uuid
+  id_device: uuid <<FK>>
+}
+
+entity "Widget" as Widget {
+  *id : uuid <<generated>>
+  --
+  *name: str
+  theme: enum
+  location_x : int
+  location_y : int
+  id_user: uuid
+  id_device: uuid <<FK>>
+}
+
+entity "WidgetToWidgetGroup" as Membership {
+  *id : number <<generated>>
+  --
+  *id_widget: uuid <<FK>>
+  id_group: uuid <<FK>>
+}
+
+entity "WidgetGroup" as WidgetGroup {
+  *id : uuid <<generated>>
+  --
+  *name: str
+}
+
+Device ----> Location
+Device ----> DeviceType
+Widget ----> Device
+DeviceAccess ----> Device
+Membership ----> Widget
+Membership ----> WidgetGroup
